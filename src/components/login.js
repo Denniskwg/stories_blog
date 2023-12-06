@@ -47,7 +47,11 @@ function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
-    const csrf = getCookie('csrftoken');
+    let csrf = await getCookie('csrftoken');
+    if (csrf === null) {
+      const response = await axios.get('http://127.0.0.1:8000/refresh_token', {withCredentials: true});
+      csrf = response.data.token;
+    }
     console.log(csrf);
     if (formData.email !== null && formData.password !== null) {
       const response = await axios.post('http://127.0.0.1:8000/login',
@@ -65,6 +69,8 @@ function LoginForm() {
       );
       if (response.status === 200) {
         login(formData.email.toString(), formData.password.toString());
+      } else {
+	alert("Invalid password or username");
       }
     }
   };

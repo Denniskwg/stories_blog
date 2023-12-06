@@ -54,6 +54,12 @@ function SignupForm() {
 
     if (response.status === 200) {
       navigate('/login');
+    } 
+    if (response.status === 400)  {
+      alert("Ensure all fields are filled");
+    }
+    if (response.status === 404) {
+      alert("User with this email already exists");
     }
   };
 

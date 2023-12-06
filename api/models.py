@@ -3,6 +3,11 @@ from django.contrib.auth.models import BaseUserManager
 from django.utils.translation import gettext as _
 from django.db import models
 import uuid
+from datetime import datetime
+from django.utils import timezone
+
+def get_time():
+    return timezone.now()
 
 
 def generate_uuid():
@@ -21,10 +26,13 @@ class CustomUserManager(BaseUserManager):
         if not email:
             raise ValueError('The Email field must be set')
         email = self.normalize_email(email)
-        user = self.model(email=email, user_name=user_name, **extra_fields)
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
+        try:
+            user = self.model(email=email, user_name=user_name, **extra_fields)
+            user.set_password(password)
+            user.save(using=self._db)
+            return user
+        except IntegrityError:
+            raise ValueError('User with this email already exists')
 
     def create_superuser(self, email, user_name, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
@@ -52,11 +60,18 @@ class User(AbstractUser, BaseModel):
         db_table = 'users'
 
 class Stories(BaseModel):
-    story_author = models.ForeignKey('User', on_delete=models.CASCADE)
-    story_title = models.CharField(max_length=100, blank=False)
-    story_content = models.TextField(blank=False)
-    story_description = models.CharField(max_length=400, blank=False)
-    story_topic = models.CharField(max_length=60, blank=False)
-    date_posted = models.DateTimeField(auto_now_add=True)
+    author = models.ForeignKey('User', on_delete=models.CASCADE)
+    title = models.CharField(max_length=100, blank=False, null=False)
+    content = models.TextField(blank=False, null=False)
+    topic = models.CharField(max_length=60, blank=False, null=False)
+    date_posted = models.DateTimeField(null=False, default=get_time)
     class Meta:
         db_table = 'stories'
+
+class Comments(BaseModel):
+    author = models.ForeignKey('User', on_delete=models.CASCADE)
+    story = models.ForeignKey('Stories', on_delete=models.CASCADE)
+    content = models.TextField(blank=False, null=False)
+    date_posted = models.DateTimeField(null=False, default=get_time)
+    class Meta:
+        db_table = 'comments'

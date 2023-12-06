@@ -1,42 +1,42 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from "react-router-dom";
 import { Row, Col } from 'react-bootstrap';
 import './components.css';
 
 
-function Trendingtopics() {
-  const sharedValue = useSelector((state) => state.sharedValue);
+function Trendingtopics(props) {
+  const stories = useSelector((state) => state.stories);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const updateSharedState = (e) => {
     dispatch({ type: 'DELETE_FROM_SHARED_VALUE', payload: e.target.dataset.name });
   }
+
+  function handleClick(e) {
+    const clicked = e.target;
+    const parentDiv = clicked.closest('.story');
+    const id = parentDiv.dataset.id;
+    navigate(`/story/${id}`);
+  }
+
+  console.log(stories);
+
   return (
     <div className="trending-stories">
         <div className="text-1">Trending stories</div>
-	<div className="user-topics">
-          {sharedValue.map(value => <div key={value} className="user-option">{value}<span data-name={value} className="remove" onClick={updateSharedState}>x</span></div>)}
-	</div>
         <Row className="stories">
-          <Col lg={4} md={6} sm={12} className="story">
-            <div className="story-author">Author</div>
-            <div className="story-heading">Story Name</div>
-	    <div className="story-description"> select all the div elements inside a specific div using CSS, you can use descendant combinator (a space)your CSS selector. Heres the CSS selector to select all div</div>
-	    <div className="date-topic"><span className="date-posted">Oct 1</span><span className="story-topic">Technology</span></div>
-          </Col>
-          <Col lg={4} md={6} sm={12} className="story">
-            <div className="story-author">Author</div>
-            <div className="story-heading">Story Name</div>
+	  {stories && stories.map(story =>
+          <Col key={story.id} lg={4} md={6} sm={12} className="story" onClick={handleClick} data-id={story.id}>
+            <div className="story-author">{story.author}</div>
+            <div className="story-heading">{story.title}</div>
 	    <div className="story-description">Description</div>
-	    <div className="date-topic"><span className="date-posted">Oct 1</span><span className="story-topic">Technology</span></div>
+	    <div className="date-topic"><span className="date-posted">Oct 1</span><span className="story-topic">{story.topic}</span></div>
           </Col>
-          <Col lg={4} md={6} sm={12} className="story">
-            <div className="story-author">Author</div>
-            <div className="story-heading">Story Name</div>
-	    <div className="story-description">Description</div>
-	    <div className="date-topic"><span className="date-posted">Oct 1</span><span className="story-topic">Technology</span></div>
-          </Col>
+	  )}
+
         </Row>
     </div>
   );

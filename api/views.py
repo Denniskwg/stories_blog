@@ -3,7 +3,7 @@ from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope
 import requests
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 import json
-from .models import User
+from .models import User, Stories
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
@@ -12,6 +12,8 @@ from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
 from .permissions import HasAllScopePermission
 from rest_framework.views import APIView
+from .get_topic import extract_topic
+from .serializers import StoriesSerializer
 
 @login_required
 def status(request):
@@ -35,6 +37,16 @@ def delete_user(request):
         user.delete()
         return JsonResponse({"message": "user deleted successfully"})
 
+
+#@ensure_csrf_cookie
+def refresh_csrf(request):
+    if request.method == 'GET':
+        csrf_token = get_token(request)
+        response = JsonResponse({'token': csrf_token}, status=200)
+        response.set_cookie('csrftoken', csrf_token, samesite='None', secure=True, path='/')
+
+        return response
+
 @csrf_exempt
 @ensure_csrf_cookie
 def register_view(request):
@@ -44,24 +56,25 @@ def register_view(request):
             user_data = json.loads(data)
             required_fields = ['first_name', 'last_name', 'user_name', 'password', 'email']
             for field in required_fields:
-                if field not in data:
+                if field not in user_data:
                     return JsonResponse({"message": f"Missing required field: {field}"}, status=400)
 
-            user = User.objects.create_user(
-                first_name=user_data.get('first_name'),
-                last_name=user_data.get('last_name'),
-                user_name=user_data.get('user_name'),
-                email=user_data.get('email'),
-                password=user_data.get('password')
-            )
-            user.backend = 'django.contrib.auth.backends.ModelBackend'
-
-            user.save()
-            #login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-            #request.session['name'] = user_data.get('email')
+            try:
+                user = User.objects.create_user(
+                    first_name=user_data.get('first_name'),
+                    last_name=user_data.get('last_name'),
+                    user_name=user_data.get('user_name'),
+                    email=user_data.get('email'),
+                    password=user_data.get('password')
+                )
+                user.backend = 'django.contrib.auth.backends.ModelBackend'
+                user.save()
+            except ValueError:
+                response = HttpResponse("User with this email already exists", status=404)
+                return response
             csrf_token = get_token(request)
             response = HttpResponse("User created successfully", status=200)
-            response.set_cookie('csrftoken', csrf_token)
+            response.set_cookie('csrftoken', csrf_token, samesite='None', secure=True)
 
             return response
 
@@ -71,7 +84,7 @@ def register_view(request):
     else:
         return JsonResponse({"message": "Invalid request method"}, status=405)
 
-#@csrf_exempt
+
 def login_view(request):
     if request.method == 'POST':
         data = request.body.decode('utf-8')
@@ -86,7 +99,6 @@ def login_view(request):
 
             if user is not None:
                 # Log in the user
-                #login(request, user)
                 login(request, user, backend='django.contrib.auth.backends.ModelBackend')
                 request.session['name'] = user_data.get('email')
                 response = JsonResponse({"message": "Logged in successfully"}, status=200)
@@ -99,8 +111,30 @@ def login_view(request):
     else:
         return JsonResponse({"message": "Invalid request method."}, status=400)
 
-class ApiEndpoint(APIView):
+
+def filter_stories(request, topic):
+    if request.method == 'GET':
+        stories = Stories.objects.filter(topic=topic)
+        if len(stories) > 0:
+            lst = [StoriesSerializer(story).data for story in stories]
+            return JsonResponse({'stories': lst}, status=200)
+        else:
+            return JsonResponse({'stories': []}, status=200)
+
+class postEndpoint(APIView):
     required_scopes = ['all']
     permission_classes = [HasAllScopePermission, IsAuthenticated]
     def post(self, request, *args, **kwargs):
-        return JsonResponse({'message': 'Posting..'}, status=200)
+        data = request.data
+        required_fields = ['title', 'content']
+        for field in required_fields:
+            if field not in data:
+                return JsonResponse({'message': 'Post must include title and content'}, status=400)
+        title = data.get('title')
+        content = data.get('content')
+        topic = extract_topic(title)[0]
+        user = User.objects.get(email=request.user)
+        
+        story = Stories(title=title, content=content, topic=topic, author=user)
+        story.save()
+        return HttpResponse(status=200)

@@ -4,7 +4,7 @@ import Button from 'react-bootstrap/Button';
 import Nav from 'react-bootstrap/Nav';
 import { useDispatch } from 'react-redux';
 import './components.css';
-import api from '../api/axios';
+import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 
 
@@ -33,27 +33,44 @@ function Optionsbox() {
 
 
   const updateSharedState = (e) => {
-    dispatch({ type: 'SET_SHARED_VALUE', payload: e.target.dataset.name });
+    if (!e.target.classList.contains('bg_grey')) {
+      dispatch({ type: 'SET_SHARED_VALUE', payload: e.target.dataset.name });
+      e.target.classList.add('bg_grey');
+    } else {
+      e.target.classList.remove('bg_grey');
+    }
   }
   return ( 
     <div className="options">
-      <div className="option" data-name="Technology" onClick={updateSharedState}>Technology</div>
-      <div className="option" data-name="HomeDecor" onClick={updateSharedState}>Home Decor</div>
-      <div className="option" data-name="Programming" onClick={updateSharedState}>Programming</div>
-      <div className="option" data-name="Lifestyle" onClick={updateSharedState}>Lifestyle</div>
-      <div className="option" data-name="Fashion" onClick={updateSharedState}>Fashion</div>
-      <div className="option" data-name="Architecture" onClick={updateSharedState}>Architecture</div>
+      <div className="option" data-name="Artificial intelligence" onClick={updateSharedState}>Artificial intelligence</div>
+      <div className="option" data-name="Software development" onClick={updateSharedState}>Software development</div>
       <div className="option" data-name="Business" onClick={updateSharedState}>Business</div>
-      <div className="option" data-name="Climatechange" onClick={updateSharedState}>Climate change</div>
     </div>
   );
+}
+
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++){
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+	break;
+      }
+    }
+  }
+  return cookieValue;
 }
 
 function NavBar(props) {
   const navigate = useNavigate();
 
-  function createNew (e) {
+  async function createNew (e) {
+    //makes api call to get auth token to authenticate user before posting blog
     const token = localStorage.getItem('TOKEN');
+
     if (token === null) {
       navigate('/login');
     } else {
@@ -72,7 +89,7 @@ function NavBar(props) {
 
   return (
     <div className="navigation navbar-expand-lg navbar-light bg-light .navbar-expand{-sm|-md|-lg|-xl}" bg="light">
-      <div className="site-name">World Stories</div>
+      <div className="site-name">Tech Stories</div>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="ml-auto header-navigation">

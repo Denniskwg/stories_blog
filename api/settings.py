@@ -61,7 +61,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ORIGIN_ALLOW_ALL = True
+#CORS_ORIGIN_ALLOW_ALL = True
 
 AUTHENTICATION_BACKENDS = [
     'oauth2_provider.backends.OAuth2Backend',
@@ -83,12 +83,14 @@ OAUTH2_PROVIDER = {
 CORS_ALLOW_CREDENTIALS = True
 CSRF_COOKIE_HTTPONLY = False
 SESSION_COOKIE_HTTPONLY = False
-CSRF_COOKIE_SECURE = False
-SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_AGE = 1209600
 CSRF_COOKIE_AGE = 1209600
 
-CORS_ORIGIN_WHITELIST = [
+
+
+CORS_ALLOWED_ORIGINS = [
         "http://localhost:3000",
         "http://127.0.0.1:3000",
 ]
@@ -104,8 +106,8 @@ CSRF_COOKIE_DOMAIN = "127.0.0.1"
 SESSION_COOKIE_PATH = '/'
 CSRF_COOKIE_PATH = '/'
 
-SESSION_COOKIE_SAMESITE = 'Lax'
-CSRF_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SAMESITE = 'None'
 
 
 ROOT_URLCONF = 'api.urls'
@@ -130,7 +132,7 @@ WSGI_APPLICATION = 'api.wsgi.application'
 
 AUTH_USER_MODEL = 'api.User'
 
-LOGIN_URL='/login'
+#LOGIN_URL='/login'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases

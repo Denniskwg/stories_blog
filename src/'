@@ -11,7 +11,9 @@ export default function Create(props) {
   const [show, setShow] = useState(false);
   const [formData, setFormData] = useState({
     heading: '',
+    description: '',
     content: '',
+    topic: '',
   });
 
   const handleInputChange = (e) => {
@@ -44,17 +46,13 @@ export default function Create(props) {
     console.log(token);
     const config = {
       headers: {
-	"Content-Type": "application/json",
         'Authorization': `Bearer ${token}`,
 	'X-CSRFToken': csrf
       },
       withCredentials: true
     }
     const response = await axios.post('http://127.0.0.1:8000/api/post_story',
-      {
-        title: formData.heading,
-	content: formData.content
-      },
+      {},
       config
     );
     console.log(response.data);
@@ -68,13 +66,18 @@ export default function Create(props) {
 	  <div className="field field-create">
             <label>Heading</label>
 	    <br/>
-	    <input type="text" name="heading" onChange={handleInputChange}/>
+	    <input type="text" name="heading"/>
 	  </div>
 	  <div className="field field-create">
-	    <textarea name="content" onChange={handleInputChange}></textarea>
+	    <label>Description</label>
+            <br/>
+	    <textarea type="text" name="description" className="description"></textarea>
+	  </div>
+	  <div className="field field-create">
+	    <textarea name="content"></textarea>
 	  </div>
 	  <div className="actions field-create">
-	    <input type="submit" name="create" value="post" className="btn btn-primary"/>
+	    <input type="submit" name="create" value="create" className="btn btn-primary"/>
 	  </div>
 	</form>
       </Col>

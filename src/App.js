@@ -20,7 +20,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/auth/login" element={<Refresh/>} />
-          <Route path="/story" element={<Story />} />
+          <Route path="/story/:id" element={<Story />} />
           <Route path="/create" element={<Create />} />
         </Routes>
       </AuthProvider>

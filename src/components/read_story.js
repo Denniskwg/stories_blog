@@ -1,17 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import './components.css';
 import { navBar as NavBar } from './header';
 import { Col } from 'react-bootstrap';
 
 export default function Story(props) {
+
+  const { id } = useParams();
+  const [story, setStory] = useState(null);
+  const stories = useSelector((state) => state.stories);
+
+  useEffect(() => {
+    const filtered = stories.filter(item=>item.id === id);
+    setStory(filtered[0]);
+  }, [story])
+
   return (
     <div>
       <NavBar />
+      {story ?
       <Col lg={8} md={6} sm={12} className="page">
-        <h1>Story Heading Might be long so accomodate for that.</h1>
+        <h1>{story.title}</h1>
 	<div>Description</div>
 	<div className="page-details">
-	  <Col className="page-author">Author</Col>
+	  <Col className="page-author">{story.author}</Col>
 	  <Col className="page-date">Date posted</Col>
 	  <div className="page-stats">
 	    <div className="page-likes">
@@ -24,8 +37,8 @@ export default function Story(props) {
 	    </div>
 	  </div>
 	</div>
-	<div className="page-content">This is the story content. Might be long</div>
-      </Col>
+	<div className="page-content">{story.content}</div>
+      </Col> : <div>Loading...</div>}
     </div>
   );
 }

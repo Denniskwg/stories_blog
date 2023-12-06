@@ -1,5 +1,6 @@
 const initialState = {
   sharedValue: [],
+  stories: null
 };
 
 
@@ -17,6 +18,13 @@ function sharedReducer(state = initialState, action) {
     case 'DELETE_FROM_SHARED_VALUE':
       const newValue = state.sharedValue.filter((item) => item !== action.payload);
       return {...state, sharedValue: newValue}
+
+    case 'SET_STORIES':
+      const storiesList = [];
+      action.payload.forEach(arr => {
+        storiesList.push(...arr);
+      });
+      return {...state, stories: storiesList}
     default:
       return state;
   }

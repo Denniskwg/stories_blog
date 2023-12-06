@@ -50,22 +50,24 @@
   #max-width: 25rem;
   flex-wrap: wrap;
 }
-
+.bg_grey{
+  background-color: rgba(0,0,0,0.075);
+}
 .option{
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 0.5rem;
+  #display: flex;
+  #flex-direction: row;
+  text-align: center;
+  #gap: 0.5rem;
   border: 1px solid #ccc;
   outline: none;
   border-radius: 1rem;
   padding: 0.4rem;
   font-size: 0.9rem;
+  #max-width: 1rem;
 }
 
 .option:hover{
   cursor: pointer;
-  background-color: rgba(0,0,0,0.075);
 }
 .remove{
 }
@@ -119,7 +121,7 @@
   word-break: break-all;
 }
 
-.story-heading:hover{
+.story:hover{
   cursor: pointer;
 }
 
@@ -150,7 +152,8 @@
 }
 .user-option{
   display: flex;
-  font-size: 0.9rem;
+  font-size: 0.5rem;
+  #max-width: 1rem;
   flex-direction: row;
   align-items: center;
   gap: 0.5rem;

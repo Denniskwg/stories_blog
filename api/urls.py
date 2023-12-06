@@ -17,7 +17,7 @@ from django.contrib import admin
 import oauth2_provider.views as oauth2_views
 from django.urls import path, include
 from django.conf import settings
-from .views import ApiEndpoint
+from .views import postEndpoint
 from . import views
 from django.views.decorators.csrf import csrf_exempt
 
@@ -49,11 +49,13 @@ if settings.DEBUG:
 
 urlpatterns = [
     #path('', views.home),
+    path('refresh_token', views.refresh_csrf),
     path('register', views.register_view),
     path('status', views.status),
     path('login', views.login_view),
     path('delete', views.delete_user),
     path('admin/', admin.site.urls),
     path('o/', include((oauth2_endpoint_views, 'oauth2_provider'), namespace="oauth2_provider")),
-    path('api/post_story', csrf_exempt(ApiEndpoint.as_view()), name="post_story"),
+    path('api/post_story', csrf_exempt(postEndpoint.as_view()), name="post_story"),
+    path('api/filter/<str:topic>', views.filter_stories)
 ]
