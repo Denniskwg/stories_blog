@@ -69,27 +69,19 @@
 .option:hover{
   cursor: pointer;
 }
-.remove{
-}
-
-.remove:hover{
-  cursor: pointer;
-}
 
 .trending-stories{
-  display: flex;
-  flex-direction: column;
-  #justify-content: space-between;
   padding: 2rem;
   text-align: left;
+}
+
+.text-1 {
+  margin-bottom: 1.2rem;
 }
 .stories{
   display: flex;
   flex-direction: row;
-  #align-items: flex-start;
   flex-wrap: wrap;
-  #gap: 1rem;
-  margin-top: 0.7rem;
 }
 
 .story{
@@ -98,7 +90,7 @@
 }
 
 .story div{
-  margin-bottom: 0.35rem;
+  #margin-bottom: 0.35rem;
 }
 
 .story-topic{
@@ -112,7 +104,7 @@
 }
 
 .story-author{
-  font-weight: 450;
+  font-weight: 400;
 }
 
 .story-heading{
@@ -210,10 +202,22 @@ label {
 
 .page, .create-page{
   padding: 2rem;
-  #width: 50%;
   text-align: left;
   margin-left: auto;
   margin-right: auto;
+}
+
+.post-comment{
+  #padding: 2rem;
+  margin-top: 2rem;
+  width: 100%;
+}
+
+.post-comment textarea{
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  max-height: 5rem;
 }
 
 .page-details{
@@ -221,7 +225,9 @@ label {
   flex-direction: column;
 }
 .page-author{
-  font-weight: 500;
+  font-weight: 400;
+  margin-bottom: 0.5rem;
+  margin-top: 0.2rem;
 }
 
 .page-stats{

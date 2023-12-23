@@ -60,7 +60,7 @@ class User(AbstractUser, BaseModel):
         db_table = 'users'
 
 class Stories(BaseModel):
-    author = models.ForeignKey('User', on_delete=models.CASCADE)
+    author = models.ForeignKey('User', on_delete=models.CASCADE, related_name='stories')
     title = models.CharField(max_length=100, blank=False, null=False)
     content = models.TextField(blank=False, null=False)
     topic = models.CharField(max_length=60, blank=False, null=False)
@@ -70,7 +70,7 @@ class Stories(BaseModel):
 
 class Comments(BaseModel):
     author = models.ForeignKey('User', on_delete=models.CASCADE)
-    story = models.ForeignKey('Stories', on_delete=models.CASCADE)
+    story = models.ForeignKey('Stories', on_delete=models.CASCADE, related_name='comments')
     content = models.TextField(blank=False, null=False)
     date_posted = models.DateTimeField(null=False, default=get_time)
     class Meta:

@@ -4,14 +4,17 @@ from .models import User, Stories, Comments
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'email']
+        fields = ['email', 'user_name']
 
 class StoriesSerializer(serializers.ModelSerializer):
+    author = UserSerializer()
+
     class Meta:
         model = Stories
         fields = ['id','content', 'title', 'date_posted', 'author', 'topic']
 
 class CommentsSerializer(serializers.ModelSerializer):
+    author = UserSerializer()
     class Meta:
         model = Comments
         fields = ['content', 'date_posted', 'author']

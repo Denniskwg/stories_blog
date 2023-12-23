@@ -47,12 +47,6 @@ function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
-    let csrf = await getCookie('csrftoken');
-    if (csrf === null) {
-      const response = await axios.get('http://127.0.0.1:8000/refresh_token', {withCredentials: true});
-      csrf = response.data.token;
-    }
-    console.log(csrf);
     if (formData.email !== null && formData.password !== null) {
       const response = await axios.post('http://127.0.0.1:8000/login',
 	{
@@ -62,7 +56,7 @@ function LoginForm() {
 	{
 	  headers: {
 	    "Content-Type": "application/json",
-	    "X-CSRFToken": csrf
+	    //"X-CSRFToken": csrf
 	  },
 	  withCredentials: true,
 	}

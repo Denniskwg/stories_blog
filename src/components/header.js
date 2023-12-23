@@ -1,10 +1,9 @@
-import {React, useState, useEffect} from 'react';
+import {React, useEffect} from 'react';
 import Navbar from 'react-bootstrap/Navbar';
 import Button from 'react-bootstrap/Button';
 import Nav from 'react-bootstrap/Nav';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import './components.css';
-import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 
 
@@ -30,7 +29,19 @@ function About() {
 
 function Optionsbox() {
   const dispatch = useDispatch();
+  const selectedOptions = useSelector(state => state.sharedValue);
 
+  useEffect(() => {
+    const domElements = document.querySelectorAll('[data-name]');
+    const matchedElements = Array.from(domElements).filter(element => {
+      const name = element.getAttribute('data-name');
+      return selectedOptions.includes(name);
+    });
+
+    matchedElements.forEach(element => {
+      element.classList.add('bg_grey');
+    });
+  });
 
   const updateSharedState = (e) => {
     if (!e.target.classList.contains('bg_grey')) {
@@ -38,6 +49,7 @@ function Optionsbox() {
       e.target.classList.add('bg_grey');
     } else {
       e.target.classList.remove('bg_grey');
+      dispatch({ type: 'DELETE_FROM_SHARED_VALUE', payload: e.target.dataset.name });
     }
   }
   return ( 
@@ -49,20 +61,6 @@ function Optionsbox() {
   );
 }
 
-function getCookie(name) {
-  let cookieValue = null;
-  if (document.cookie && document.cookie !== '') {
-    const cookies = document.cookie.split(';');
-    for (let i = 0; i < cookies.length; i++){
-      const cookie = cookies[i].trim();
-      if (cookie.substring(0, name.length + 1) === (name + '=')) {
-        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-	break;
-      }
-    }
-  }
-  return cookieValue;
-}
 
 function NavBar(props) {
   const navigate = useNavigate();

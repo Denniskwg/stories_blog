@@ -3,19 +3,18 @@ from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope
 import requests
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 import json
-from .models import User, Stories
+from .models import User, Stories, Comments
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.middleware.csrf import get_token
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
-from .permissions import HasAllScopePermission
+from .auth import HasAllScope
 from rest_framework.views import APIView
 from .get_topic import extract_topic
-from .serializers import StoriesSerializer
+from .serializers import StoriesSerializer, CommentsSerializer
 
-@login_required
 def status(request):
     print(request.user)
     print(request)
@@ -84,7 +83,7 @@ def register_view(request):
     else:
         return JsonResponse({"message": "Invalid request method"}, status=405)
 
-
+@csrf_exempt
 def login_view(request):
     if request.method == 'POST':
         data = request.body.decode('utf-8')
@@ -121,9 +120,20 @@ def filter_stories(request, topic):
         else:
             return JsonResponse({'stories': []}, status=200)
 
+def get_comments(request, id):
+    if request.method == 'GET':
+        story = Stories.objects.get(id=id)
+        comments = story.comments.all()
+        if len(comments) > 0:
+            comments_lst = [CommentsSerializer(comment).data for comment in comments]
+            return JsonResponse({'comments': comments_lst}, status=200)
+        else:
+            return JsonResponse({'comments': []}, status=200)
+
+
 class postEndpoint(APIView):
-    required_scopes = ['all']
-    permission_classes = [HasAllScopePermission, IsAuthenticated]
+    authentication_classes = [HasAllScope]
+    permission_classes = [IsAuthenticated]
     def post(self, request, *args, **kwargs):
         data = request.data
         required_fields = ['title', 'content']
@@ -138,3 +148,23 @@ class postEndpoint(APIView):
         story = Stories(title=title, content=content, topic=topic, author=user)
         story.save()
         return HttpResponse(status=200)
+
+class postComment(APIView):
+    authentication_classes = [HasAllScope]
+    permission_classes = [IsAuthenticated]
+    def post(self, request, *args, **kwargs):
+        data = request.data
+        required_fields = ['story', 'content']
+        for field in required_fields:
+            if field not in data:
+                return JsonResponse({'message': 'comment must include {}'.format(field)}, status=400)
+        story_id = data.get('story')
+        content = data.get('content')
+        if content == '':
+            return JsonResponse({'message': 'comment cannot be empty'}, status=400)
+
+        author = User.objects.get(email=request.user)
+        story = Stories.objects.get(id=story_id)
+        comment = Comments(story=story, content=content, author=author)
+        comment.save()
+        return JsonResponse({'message': 'comment posted successfuly'}, status=200)
