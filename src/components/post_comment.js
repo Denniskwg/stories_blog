@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import './components.css';
 import { Col } from 'react-bootstrap';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 
 export default function PostComment(props) {
 
   const [content, setContent] = useState('');
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const value = e.target.value;
@@ -54,8 +55,14 @@ export default function PostComment(props) {
     })
     .catch(err =>{
       console.log(err);
-      alert(err.data.message);
+      if (err.response.data.detail === "Invalid or expired token.") {
+        navigate('/auth/login');
+      } else {
+        alert(err.response.data.message);
+      }
     })
+    const commentText = document.querySelector('.input-comment');
+    commentText.value = '';
   }
 
   return (
@@ -64,7 +71,7 @@ export default function PostComment(props) {
 	<div>post a comment</div>
 	<form onSubmit={handleSubmit}>
 	  <div className="field field-create">
-	    <textarea name="content" onChange={handleInputChange} value={content}></textarea>
+	    <textarea name="content" className="input-comment" onChange={handleInputChange} value={content}></textarea>
 	  </div>
 	  <div className="actions field-create">
 	    <input type="submit" name="create" value="post" className="btn btn-primary"/>

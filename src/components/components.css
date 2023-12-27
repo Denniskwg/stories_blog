@@ -208,9 +208,8 @@ label {
 }
 
 .post-comment{
-  #padding: 2rem;
   margin-top: 2rem;
-  width: 100%;
+  #width: 100%;
 }
 
 .post-comment textarea{
@@ -288,4 +287,21 @@ label {
   border-radius: 0.5rem;
   height: 19rem;
 }
-
+.commentsDiv{
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-top: 2rem;
+}
+.comment{
+  text-align: left;
+  margin-bottom: 0.5rem;
+  width: 100%;
+}
+.comment-author{
+  font-weight: 480;
+}
+.comment-content{
+  font-weight: 300;
+}

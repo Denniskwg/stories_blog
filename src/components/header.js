@@ -31,6 +31,7 @@ function Optionsbox() {
   const dispatch = useDispatch();
   const selectedOptions = useSelector(state => state.sharedValue);
 
+
   useEffect(() => {
     const domElements = document.querySelectorAll('[data-name]');
     const matchedElements = Array.from(domElements).filter(element => {
@@ -62,7 +63,7 @@ function Optionsbox() {
 }
 
 
-function NavBar(props) {
+function NavBar({verify, show}) {
   const navigate = useNavigate();
 
   async function createNew (e) {
@@ -84,16 +85,15 @@ function NavBar(props) {
       }
     }
   }
-
   return (
     <div className="navigation navbar-expand-lg navbar-light bg-light .navbar-expand{-sm|-md|-lg|-xl}" bg="light">
       <div className="site-name">Tech Stories</div>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="ml-auto header-navigation">
-	  {props.show && <Button onClick={createNew}>Write</Button>}
+	  {show && <Button onClick={createNew}>Write</Button>}
           <Nav.Link className="nav-element" href="/">Home</Nav.Link>
-	  <Nav.Link className="nav-element" href="/signup">Signup</Nav.Link>
+	  {verify && <Nav.Link className="nav-element" href="/login">Login</Nav.Link>}
 	</Nav>
       </Navbar.Collapse>
     </div>

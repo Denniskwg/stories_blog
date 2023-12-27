@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import './components.css';
 import { navBar as NavBar } from './header';
 import { Col } from 'react-bootstrap';
-import api from '../api/axios';
 import axios from 'axios';
 
 
@@ -50,14 +49,18 @@ export default function Create(props) {
       },
       withCredentials: true
     }
-    const response = await axios.post('http://127.0.0.1:8000/api/post_story',
-      {
-        title: formData.heading,
-	content: formData.content
-      },
-      config
-    );
-    console.log(response.data);
+    if (formData.heading && formData.content) {
+      const response = await axios.post('http://127.0.0.1:8000/api/post_story',
+        {
+          title: formData.heading,
+	  content: formData.content
+        },
+        config
+      );
+      console.log(response.data);
+    } else {
+      alert("Both heading and content are required");
+    }
   }
 
   return (

@@ -103,12 +103,16 @@ def login_view(request):
                 response = JsonResponse({"message": "Logged in successfully"}, status=200)
                 return response
             else:
-                return JsonResponse({"message": "Invalid email or password."}, status=401)
+                try:
+                    existing_user = User.objects.get(email=email)
+                    return HttpResponse(status=400)
+                except User.DoesNotExist:
+                    return HttpResponse(status=401)
         except json.decoder.JSONDecodeError:
-            return JsonResponse({"message": "Invalid Json data!"}, status=400)
+            return HttpResponse(status=400)
 
     else:
-        return JsonResponse({"message": "Invalid request method."}, status=400)
+        return HttpResponse(status=400)
 
 
 def filter_stories(request, topic):

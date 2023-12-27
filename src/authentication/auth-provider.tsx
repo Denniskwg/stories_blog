@@ -139,7 +139,7 @@ export const AuthProvider = (opts: AuthProviderOptions): JSX.Element => {
               localStorage.setItem(TOKEN_LOCALSTORAGE_KEY, token);
               expires_at = '' + expires_at.getTime()
               localStorage.setItem(EXPIRES_AT, expires_at);
-              navigate(-1);
+              navigate('/');
               resolve(res);
             })
             .catch((err) => {
