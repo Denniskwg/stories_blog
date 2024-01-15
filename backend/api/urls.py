@@ -48,7 +48,6 @@ if settings.DEBUG:
 
 
 urlpatterns = [
-    #path('', views.home),
     path('refresh_token', views.refresh_csrf),
     path('register', views.register_view),
     path('status', views.status),
