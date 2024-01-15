@@ -14,7 +14,6 @@ jobs:
           node-version: 18.16.0
 
       - name: install dependencies
-        working-directory: ./frontend
         run: npm install
 
       - name: Build React app
